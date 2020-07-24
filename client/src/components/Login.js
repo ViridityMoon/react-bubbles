@@ -1,7 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import { axiosWithAuth } from '../auth/axiosWithAuth';
 
-const Login = () => {
+const Login = (props) => {
   const [creds, setCreds] = useState({
     username: '',
     password: ''
@@ -10,8 +10,9 @@ const Login = () => {
   const login = e => {
     e.preventDefault();
     axiosWithAuth()
-        .post('/login', creds)
+        .post('/api/login', creds)
         .then(res => {
+            console.log(res);
             localStorage.setItem('token', res.data.payload);
             props.history.push('/protected');
         })
