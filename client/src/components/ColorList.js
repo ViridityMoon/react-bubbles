@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
+import { axiosWithAuth } from '../auth/axiosWithAuth';
 
 const initialColor = {
   color: "",
@@ -7,9 +7,12 @@ const initialColor = {
 };
 
 const ColorList = ({ colors, updateColors }) => {
-  console.log(colors);
   const [editing, setEditing] = useState(false);
   const [colorToEdit, setColorToEdit] = useState(initialColor);
+
+  const redirect = () => {
+    document.location.reload(true);
+  };
 
   const editColor = color => {
     setEditing(true);
@@ -21,10 +24,25 @@ const ColorList = ({ colors, updateColors }) => {
     // Make a put request to save your updated color
     // think about where will you get the id from...
     // where is is saved right now?
+
+    axiosWithAuth()
+      .put(`/api/colors/${colorToEdit.id}`, colorToEdit)
+      .then(res => {
+        setColorToEdit(initialColor)
+      })
+      .catch(err => console.log(err.response));
+
+      redirect();
   };
 
   const deleteColor = color => {
     // make a delete request to delete this color
+    axiosWithAuth()
+      .delete(`/api/colors/${color.id}`)
+      .then(res => console.log(res))
+      .catch(err => console.log(err));
+    
+      redirect();
   };
 
   return (
@@ -35,7 +53,7 @@ const ColorList = ({ colors, updateColors }) => {
           <li key={color.color} onClick={() => editColor(color)}>
             <span>
               <span className="delete" onClick={e => {
-                    e.stopPropagation();
+                    e.stopPropagation(); // this makes the other onClick not happen
                     deleteColor(color)
                   }
                 }>
