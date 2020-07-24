@@ -93,6 +93,7 @@ let nextId = 12;
 
 function authenticator(req, res, next) {
   const { authorization } = req.headers;
+  console.log(authorization)
   if (authorization === token) {
     next();
   } else {
